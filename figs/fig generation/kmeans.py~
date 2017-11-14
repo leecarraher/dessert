@@ -1,0 +1,75 @@
+from pylab import plot,show,scatter,subplot,axis,figure
+from numpy import vstack,array
+from numpy.random import rand,randn
+from scipy.cluster.vq import kmeans2,vq
+from random import randint
+from seaborn import plot
+import matplotlib.gridspec as gridspec
+
+
+
+def consistColor(pt,taken):
+    lst = 100000.0
+    ret = taken[0]
+    for i in taken:
+        d = (pt[0]-clu[i][0])**2 + (pt[1]-clu[i][1])**2
+        if d < lst:
+            lst = d
+            ret = i
+    taken.remove(ret)
+    return ret
+
+def wcss(cent,pts):
+    ss = 0.0
+    for v in pts:
+        ss+=((v[0]-cent[0])**2+(v[1]-cent[1])**2)
+    return ss**.5
+
+def run(j,labels):
+    centroids,_ = kmeans2(data,k,minit="points")
+    idx,_ = vq(data,centroids)
+    pl = fig.add_subplot('33'+str(j))
+    pl.get_xaxis().set_visible(False)
+    pl.get_yaxis().set_visible(False)
+    taken = range(k)
+    ss = 0
+    labels= array(labels)
+    for i in range(k):
+        assoc = consistColor(clu[i],taken)
+        curcolor = colors[assoc]
+        curmarker = markers[assoc]
+
+        pl.plot(data[labels==i,0],data[labels==i,1],markeredgecolor=curcolor,marker=curmarker,markersize=5,linestyle=' ',markerfacecolor='none')
+        ss+= wcss(centroids[i],data[idx==i])
+    for i in range(k):
+        pl.plot(clu[i][0],clu[i][1],'gold',marker='*',markersize=12,linestyle=' ')#,markeredgewidth=2,markeredgecolor=curcolor)
+
+    for i in range(k):
+        pl.plot(centroids[i][0],centroids[i][1],marker='o',markersize=60,linestyle=' ',markeredgewidth=.3,markeredgecolor='black',markerfacecolor='none')
+        pl.plot(centroids[i][0],centroids[i][1],'black',marker='x',markersize=5,linestyle=' ',markeredgewidth=2)
+    pl.text(.5,.94,"wcss="+str(ss)[:6],
+        horizontalalignment='center',
+        transform=pl.transAxes)
+
+    print ss
+
+
+
+# data generation
+k=4
+npts = 300
+clu = rand(k,2)*3
+
+colors = ['green','blue', 'purple', 'red', 'orange','yellow', 'gold']
+markers = ['o','v','s','+','4','3','*']
+
+
+labels = [randint(0,k-1) for i in xrange(npts)]
+data = [randn(2)*.085 + (rand(2)*2-1)*.5+clu[labels[i]] for i in xrange(npts)]
+data = vstack(data)
+fig = figure(figsize=(9,9))
+for j in range(9): run(j,labels)
+fig.subplots_adjust(wspace=.01, hspace=.01)
+#fig.tight_layout()
+#plot(centroids[:,0],centroids[:,1],'sm',markersize=2)
+show()

@@ -1,0 +1,112 @@
+
+
+
+\thispagestyle{empty}
+
+\doublespacing
+
+\vspace*{0.5in}
+
+\begin{center}
+\LARGE{\textbf{Approximate Clustering Algorithms for High
+Dimensional Streaming and Distributed Data}}
+
+
+\vspace*{0.4in}
+
+  {\large A dissertation submitted to the\\[0.20in]
+    Division of Research and Advanced Studies\\
+    of the University of Cincinnati\\[0.20in]
+    in partial fulfillment of the\\
+    requirements for the degree of\\[0.20in]
+    {\bf DOCTOR OF SCIENCE}\\[0.20in]
+    in the School of Electric and Computing Systems\\
+    of the College of Engineering and Applied Sciences\\[0.20in]
+    \date{\today} 
+    by\\[0.20in]
+    {\bf Lee A Carraher}\\
+    BSCE, University of Cincinnati, 2008\\
+    MSCS, University of Cincinnati, 2012\\}
+  \vspace{0.5in}
+  {\large Thesis Advisor and Committee Chair:  Dr. Philip Wilsey}
+\end{center}
+
+%\clearpage
+
+%\newpage
+%\thispagestyle{empty}
+%\mbox{}
+
+%\setcounter{page}{1}
+%\pagenumbering{roman}
+%\clearpage
+
+
+\newpage
+\thispagestyle{empty}
+\mbox{}
+
+\chapter*{Abstract} 
+Clustering data has gained popularity in recent years due to an expanding opportunity to discover knowledge and collect
+insights from multiple widely available and diverse data sources.  Data clustering offers an intuitive solution to a
+wide variety of unsupervised classification problems.  Clustering solutions to problems arise often in areas in which no
+ground truth is known, or when the arrival frequency of a data source exceeds the labeling capabilities of a human
+expert.  Due to the continuous, fast moving nature of many common data streams, such as those from IoT (Internet of
+Things) devices, social network interactions, e-commerce click-streams, scientific monitoring devices, and network
+traffic, noise robust and distributed clustering algorithms are necessary.
+
+Often, current clustering methods suffer from one or more drawbacks when applied to these demanding problems.  For
+this reason, we propose a new method for data clustering that is noise resilient, and distributed with a predictable
+overall complexity.  The principal claim of this research is that while many clustering algorithms rigorously optimize
+a loss function, their convergence often results in finding a local minima that is indistinguishable from a less 
+computationally rigorous optimization on an approximation of the data.  We propose that by removing the rigorous optimization 
+requirement, we can achieve better scalability, and parallelism with comparable performance.  In this work we design a 
+clustering algorithm along these lines that uses dimensional reduction and hashing to reduce the problem size while still 
+attaining comparable clustering performance to other clustering algorithms. Our proposed method is more robust to 
+noise with a lower runtime requirement, and greater opportunity for shared and distributed memory parallelism.
+
+This work presents a set of methods for clustering high dimensional data for a variety of data source and processing
+environments. The proposed \textsf{RPHash} algorithms share a commonality in that they all utilize locality sensitive hash (LSH)
+functions and random projection (RP) to identify density modes in data sources.  They differ however in the operation space
+and cluster region identification method. The algorithms presented are the \textsf{RPHash} algorithm, the 
+\textsf{streamingRPHash} algorithm, and the Tree Walk RPHash (\textsf{TWRP}) algorithm.
+
+We analyze the results of our developed algorithms on both streaming and at-rest data input environments.
+Experiments on real and synthetic data demonstrate the advantages of our proposed clustering methods for 
+streaming and at-rest data against common clustering algorithms.  Furthermore our theoretical analysis shows
+that our runtime and memory complexities are effectively linear and sub-linear respectively, in terms of input.
+Our principal claim that approximate clustering results are not substantially different than exact 
+clustering methods with guarantee convergence to a local minima, is confirmed by these results. In addition
+we demonstrate the potential gains in processing speed and parallelism.
+
+
+\chapter*{Acknowledgments} 
+
+%% put your acknowledgements here.
+\begin{center}
+ For My Friends, Family and Mentors
+\end{center}
+
+I would like to acknowledge the following people for their hard work and research effort on this work. People and organization
+who without which none of this would have been possible.  First and foremost, my extreme gratitude goes out to my advisor: 
+Prof.\@ Philip Wilsey.  Prof.\@ Wilsey's guidance not only in academic pursuits, but in so many aspects of my life, 
+are truly appreciated.  His adherence to relentless delivery in terms of research development, publication and testing, are a
+testament to his own commitment to scholarship.  Throughout our time working together, I feel that we have truly forged a bond of
+friendship and colleague that far exceeds my expectation.  With my deepest gratitude I would like to say thank you Professor Wilsey.
+I would also like to thank my fellow student researchers and co-authors: Sayantan Dey, Anindya Moitra. My co-developers
+and fellow student researchers: Nick Malott, Tyler Parcell, and the Go-Lang \textsf{RPHash} group.  Finally I would
+like to thank my friends and family, my parents, brothers and sisters, and my wife Alex. Alex your support and
+encouragement has been an inspiration to me. Your courage and commitment in your own academic pursuits are things that I constantly
+try to emulate and apply to my own research. I'd also like to thank the University of Cincinnati, Department of Engineering
+and Applied Sciences, and the National Science Foundation for financial, equipment and facilities support.
+
+%% these three lines will cause latex to automatically generate these entries
+%% for you....nice.  you can comment them out if, for example, your thesis does
+%% not contain any tables.
+\tableofcontents \markright{ }
+\listoffigures \markright{ }
+\listoftables \markright{ }
+
+\clearpage
+\pagenumbering{arabic} \setcounter{page}{1}
+

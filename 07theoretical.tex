@@ -1,0 +1,171 @@
+\chapter[Theory]{Algorithmic Complexity and Theory}\label{theory}
+In this section we analyze the performance of the proposed variants of \textsf{RPHash} in regard to their asymptotic complexity.
+Although adversarialy crafted datasets can be NP-Hard for iterative update methods like Hartigan and Wong's $k$-Means
+algorithm \cite{Vattani}, they often fair much better in practice. In common practice $k$-Means tends to be described 
+as having $\Theta(n\log\log(n))$-complexity, or sometimes simply $\Theta(n)$. While this fact is useful in terms of
+scalability, the effects of constant factors can vary widely in practice in regard to processing time. For this
+reason we prefer the results presented in Chapter \ref{experiments} for exact timing results. None-the-less we provide
+a complexity analysis for \textsf{RPHash}, and in all cases find them to be linear, and predictable.
+
+\section{RPHash Complexity}
+In the experimental section we empirically show that \textsf{RPHash} has linear complexity. However in this section
+we take a more theoretical approach to proving this claim. Namely we show that \textsf{RPHash} has asymptotic complexity,
+that is linear to the input size. 
+
+\subsection{Algorithmic Complexity}
+The simplest form of \textsf{RPHash}, the two pass approach. This approach has a rather simple complexity derivation.  The
+algorithm passes once over all vectors, performing a projection and a hash.  The dimensionality of
+the projections $m$ depends on the number of input vectors $n$ and not on the dimension of the
+vectors $d$.  From JL-Lemma, we set this dependence as $m=\Theta(\log(n))$, where the problem input
+space is $N=nd$.  Projection requires $\Theta(\log(N/d)N/3)$ steps, with generally small constant
+factors using the db-friendly projection of \cite{Achlioptas01}.  When $\log(N/d)$ is near $c^3$,$c$
+is constant and projection is linear.  Hashing on the projected vectors is performed
+in constant time for certain lattices (\emph{e.g.,} $\Lambda_{24}, E_8$), or using $m=\log(d)$, 
+$\Theta(2\log(d))$-time.  Updating the counters in the first phase is performed in constant time,
+through a hash-table, or count sketch.  Thus, the overall complexity of phase one is
+$\Theta(\log(N/d)N/3 + C ) = \Theta{N}$.
+
+The second pass of 2-pass \textsf{RPHash} consists of the same process as the first pass to project and look
+up vectors and their respective hash ids.  However in the second phase we also compute the centroids
+for dense hash buckets.  The worse case complexity of the update process is $\Theta(nd)$ or
+$\Theta(N)$ assuming all vectors are contained in a dense cluster.  The overall complexity of the
+second pass is $\Theta(N+N) = \Theta(N)$.  Examining both phases, we have an overall complexity of
+$\Theta(\log(N/d)N/3 + C ) + \Theta(N) + \Theta(N) = \Theta(N)$ which when $\log(N/d)\approx 3$, is
+effectively linear.
+
+\section{Streaming RPHash Complexity}
+In this section we discuss the compute and memory complexities of the streaming variant of \textsf{RPHash}
+(\textsf{streamingRPHash}.  One of the principal goals for a streaming algorithm, and basic
+requirements, is that the computational complexity is at least sub polynomial and the Storage
+complexity is sub-linear. We prove both of these claims in the following two sections.
+
+\subsection{Computation Complexity}
+One of the earliest streaming solutions for the approximate \emph{$k$-HH} algorithms is the
+Count-Min sketch data structure \cite{cormode2}.
+Count-Min sketch can be used to solve the approximate \emph{$k$-HH} problem with only the addition
+of a priority queue using $\Theta({1\over \epsilon} \log {1 \over \delta})$ space with error
+$(1-\epsilon)f$, where $f$ is the minimum frequency $m \over k$ to be considered frequent.  The
+complexity of \textsf{streamingRPHash} is:
+$$\Theta \bigg( NP\bigg(  {{Md}\over{3}} +\log(d)\big(\log(k)+d+2d^2\big)\bigg ) \bigg)$$
+when using $P$ database friendly projections from $M$ to $d$, SLSH decoding complexity ($2d^2$), a
+balanced priority tree (with $\Theta(\log(k))$ insertion and constant time removal), and a blurring
+factor $\log(d)$.  The projection step ${{Md}\over{3}}$ tends to dominate when $M>>d$.  If we remove
+the constant factor, constant number of projection $P$ and subspace $d$, we have complexity of
+$\Theta(NM)$ , leaving only the input and thus, the algorithm is linear in $n$.
+ 
+\subsection{Storage Complexity}
+Streaming algorithms are potentially unbounded in size. While the limit is finite, it does 
+impose an additional storage requirement on our algorithm. In particular, our algorithm must
+grow sub-linear, otherwise the stream is no different than reading a large data set into memory.
+
+Using the Count-Min sketch to store the approximate hash counts gives us a bound on storage
+complexity that is a product of the stream size and desired error rate.  
+Cormode \cite{cormode2} shows that the storage complexity of the Count-Min Sketch with error tolerance
+$\epsilon$, where $\epsilon = 1-\delta$ is $\Theta( B ln({{1}\over{\delta}}))$, where $B$ is the number of
+independent objects that need to be counted.
+If then use a bounded $k$HH-Tree of size $klog(k)$ to maintain the $klog(k)$ densest
+vector centroids, we come to a total space requirement of 
+$$\Theta((d k log(k))ln({{1}\over{\delta}}))$$
+If we assume $k\approx \log\log(n)$. We get a final complexity of
+$$\Theta(d \log\log(n/d) \log\log\log(n/d)) =\Theta(d\log\log(n)) $$
+ 
+\section{TWRP Complexity}
+The complexity of \textsf{TWRP} is similar to that of \textsf{streamingRPHash}.  More precisely, consider its
+complexity from the perspective of a per vector complexity, with an on-line and off-line step.  For
+each vector \textsf{TWRP}  must compute the projection, and update the sketch.  Projection using the db
+friendly approach of Achlioptas \cite{Achlioptas01} can be performed in $\Theta(dm/3)$ operations
+where $d$ is the original dimensionality, $m$ is the projection sub-dimension and
+$m=\Theta(\log(n))$ where $n$ is the total number of input vectors.  Assuming $n$ is large, but not
+infinite, the projection step is $\Theta(d\log(C))$, where $C$ is a constant related to $log(n)$ by the JL 
+lemma.  From the complexity analysis of Count-Min Sketch for \textsf{streamingRPHash}, we have an additional 
+complexity factor of $\Theta(ln({{1}\over{\delta}}))$.  Following this, the time to update all levels of the hash are
+consequently the tree depth and dimensionality of the projected subspace.  Leading to an overall per
+object complexity of $\Theta( d m^2 ln({{n}\over{\delta}}) )$.  The Count-Min Sketch update factor
+is effectively constant for a reasonable chosen $\delta=.01$.  Furthermore, following
+Johnson-Lindenstrauss's bound on sub-dimension representations, reasonably $m =
+\Theta({{\log(d)}\over {\epsilon}}) $, resulting in a complexity of $\Theta(
+m d\log(C)\log(C))=\Theta(m d \log^2(C))$ .
+
+The off-line step consists of the min-cut tree exploration.  The exploration follows a depth first
+search tree-traversal for candidate clusters, which has a worse case complexity when exploring all
+non-leaf nodes of $\Theta( 2^{d-1})$.
+
+\subsection{Storage Complexity}\label{twrperror}
+The count-min tree is generally never explored in its entirety. Instead only nodes corresponding to
+dense hash regions are traversed.  Furthermore if we store the counts approximately in the Count-Min 
+sketch, the storage requirement can be further reduced.  Therefore
+if we only traverse dense clusters, using a Count-Min Sketch, we get the standard $k$-Heavy-Hitter formulation.
+This formulation has storage complexity $\Theta( ln({n\over \delta}))$ for n items, and a desired error 
+$\delta = 1-\varepsilon$.  
+Although the Count-Min Sketch size is parametric in the desired error bound, for 
+acceptable error rates, we must store a sketch of centroids that is at least $\Theta( m ln({n\over \delta}))$.
+This will violate the streaming data requirement when $\delta > n \mathbb{e}^{-n/m}$.
+However, we can use the tree structure to our advantage, to correct errors after the fact.
+
+\subsubsection{Count-Min Tree Error}
+
+Interestingly, this leads to a boost in the general Count-Min Sketch error, because we can
+recover errors using adjacent parent and sibling nodes in the induced space cut tree. In other words, 
+by exploring neighboring tree nodes, we can confirm or refute the approximate count of a node. This
+is particularly useful for the possible occurrence of a short LSH ID, colliding with a much longer
+ID. Which would result in a false branch. To illustrate this, we can consider the case where we
+have two sibling nodes, with approximate cardinality, 5 and 100. The parent node cardinality should
+be near or exactly 105, otherwise we can suspect a collision error in the larger node. Using 
+the triangle inequality, we can confirm or refute the approximate counts within this hierarchy of nodes.
+Furthermore, if the parent and sibling counts do not fully satisfy the triangle inequality requirement,
+we can query the counts of their parent and child nodes to find additional support, and correct approximate 
+count errors.
+
+For count min-sketch alone, we choose the number of sketches to be $ln({n\over \delta})$\cite{cormode2}. 
+However using tree count adjacency we can reduce the count error to $\sqrt{\delta}$ and set the number of sketches
+$\Theta({e \over \varepsilon})$. Resulting in a total storage requirement of 
+$\Theta(m{e \over \varepsilon}ln({{nlog(d)}\over{(\sqrt{\delta)}}}))$.
+ 
+\section[RP Speedup]{DB Friendly Random Projection Speed Up}
+
+From \cite{Achlioptas01} we know that a set of vectors can be projected into a lower dimensional
+embedding $\Re^d$ where $d \propto {\Omega({{ \log(n) }\over {\epsilon^2 \log 1/\epsilon} })}$ with
+low $\epsilon$-distortion if projected using a matrix formed as:
+
+$$r_{ij}= \sqrt{3}
+\begin{cases}
++1,  \text{with probability } {1 \over 6}\\
+0,  \text{with probability } {2 \over 3}\\
+-1,  \text{with probability } {1 \over 6}\\
+\end{cases}
+$$
+where: \\
+$n$ - number of vectors\\
+       $m$ - vector dimensionality\\
+       $k$ - projected space dimensionality\\
+
+\noindent
+The above result allows us to avoid the computationally expensive task of matrix orthogonalization.
+This point is due to the high probability of randomly generated vectors being nearly orthogonal as $n$
+increases.  Furthermore, the above result suggests we can avoid the costly generation of the normal
+variate, as the above suffices to give a nearly normal distribution about the point in the projected
+subspace.  Computing and multiplying still naively requires $nmk$ operations.  Below we will show
+how to get this down to $\log({3\over2})nmk$ operations.  A trick, since multiplying by \(0\) is has
+no effect on the row vector sums, is to select $n\over 3$ of the indices from a given vector, and
+multiplies them by $+1/-1$ evenly (thus our $1\over6$ probability).  Random selection however
+requires us to either store collisions and re-select indices until they do not collide.  The odds of
+a perfect non-colliding intersection are tremendously low due to the birthday problem (yields
+$\approx {{2} \over{3 n}} $).  So we need to account for intersections.  The amount of intersection
+however is bounded.  To assess this bound we use Riemann Sums and Union Bound Estimate simultaneously
+to obtain the integral:
+
+$${\int ^{n\over3}_0 {1\over{n-x} }dx}= ln({3\over2}),$$
+
+
+\noindent
+For the selections $$\underset{x\to\infty}{lim}({1\over n}+{1\over {n-2}}...+{1\over{n-n/3}})$$
+By changing our range from 0 to \(1\over3\), to $ln({3\over2})$, we now generate our selections and
+compensate for the intersections.  The evenness of $+1/-1$ assures that even though we are
+generating more indices, the generated distribution will still be symmetric about 0.  Although we can
+similarly calculate the probability of the additional selections colliding with the selected
+${2\over3} - ln({3\over2})$, the recursion converges quickly and the effects are negligible.  An experiment
+was performed for a set of uniform random vectors $x\in X $ where $d=5000$. In the experiment we compared shuffling 
+a full list and selecting the first $n/3$ indices, to our proposed selection of $n\ln({3\over2})$ from the full 
+range of indices one after another. In this experiment we get the following deviation between $p_1$- db-friendly 
+projection and $p_2$ - sequential random selection projection.
+$$\|p_1^{\intercal}X - p_2^{\intercal}X\|=.00001$$. 

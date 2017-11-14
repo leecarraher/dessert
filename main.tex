@@ -1,0 +1,177 @@
+
+%% this is a general purpose outline for preparing your thesis.  do not rigidly
+%% follow this; feel free to discuss alternate structures with me.  your work
+%% may have unique features that should be treated accordingly.  this template
+%% that sets up the latex formatting and that contains my comments on the main
+%% structures/paragraphs that you should develop for a masters or phd thesis.
+%% the cover page is setup for a masters thesis; it is easily adjusted for a phd
+%% dissertation.
+
+%% as you can probably guess, in latex the ``%'' sign starts a comment, for some
+%% reason i got in the habit of using two for main comments like this and have
+%% done so ever since.  the comment goes to the end of the line.
+
+%% to build this you will have to install the standard latex packages (if you
+%% want to use the machine in my office that works.  the basic build command
+%% sequence is (assuming the main latex file is titled ``thesis.tex''):
+
+%% pdflatex thesis
+%% bibtex thesis
+%% pdflatex thesis
+%% pdflatex
+
+%% you do not actually need to do all four every time, but whenever you change
+%% the citations/references file, you will have to go through the complete
+%% sequence to have all labels resolve (basically latex is a one-pass system
+%% that uses files to record references for use in later passes.
+
+%% the way i've set this up, you will create your main prose in this file
+%% (thesis.tex), your references will go in the bibtex file (refs.bib, i have
+%% set yours up with my version for the parallel simulation literature) and your
+%% figures should be stored as pdf in the figs subdirectory.  there are online
+%% tutorials and books available to help you (i would stick to the online
+%% stuff).  i can also help you resolve some things.  i will give you a quick
+%% tutorial on the use of latex below (by example).
+
+%% ------------------------------------------------------------------------
+
+%% SOME COMMENTS ON THESIS WRITING
+
+%% as you write your thesis, remember that this is a formal document; it is a
+%% story and it should be interesting, but it should *not* be informal.  the
+%% prose should be in 3rd person (no ``I'' or ``we'').  each paragraph should
+%% stay in the same tense (prefereably present tense), and USE ACTIVE VOICE.
+
+%% also, you will have to repeat yourself much more than you are confortable
+%% with.  your writing has to carry the reader, you literally have to lead them
+%% through your chapters.  you *will* end up restating things that you think are
+%% obvious.  each chapter will have to begin with an intro to remind the reader
+%% where you are going to take them (they will forget).  it is not obvious to
+%% them, you have to explain.
+
+%% remember, however, that it is a story, it is a technical story, but
+%% none-the-less, you are developing an idea and you want potential readers to
+%% pay attention to your prose.  make it a story that flows.  
+
+%% each paragraph should focus on one topic and you may need to have transitions
+%% between the paragraphs to help the reader make the transition through your
+%% discussion.  generally you don't really have to do much to support
+%% transistions.  develop your paragraph structure to present a coherent thought
+%% from the topic sentence to the final sentence (of the paragraph).  most of
+%% the time this will naturally lead you to the subsequent paragraph.  so in the
+%% end, it *is* a story that is easy to read.
+
+%% no contractions, ever!!  write formally, no ``something gets'' instead write
+%% ``something obtains'', think about your wording.  use exactly the word you
+%% want at each place in the prose; think about the subtle different definitions
+%% similar words, ``between'' and ``among'' have drastically different meanings;
+%% so do ``complex'' and ``complicated''.  be sure you understand the
+%% differences.  you will live with a dictionary (online or on paper) as you
+%% write this thesis, you will be surprised at how much you really don't know
+%% about a word's real definition (you'd be surprised to know how much i still
+%% use a dictionary).  finally, think about your words, expand your writing
+%% vocabulary.  it can be really rewarding to write very good prose (and your
+%% mechanics of writing are already solid).  what makes good writing superior is
+%% the vocabulary and consistency.
+
+%% be consistent!!  this is biggly important.  when you name something use the
+%% same naming throughout; don't call something a subsystem in one chapter and a
+%% subassembly in another.  select a name for your thing (e.g., signing device,
+%% simulation object, etc) and stick with it throughout.  there is nothing more
+%% confusing and offputting than to have the writer use multiple phrases to
+%% refer to the same thing.  consistency is critical.  i could go on and on, but
+%% let's stop here for now.
+
+%% some more general comments:
+
+%% 1. citations should have a preceeding space space use ``citation \cite{foo}''
+%%    instead of ``citation\cite{foo}''.
+
+%% 2. if you have a figure/table in the document, it must be discussed in the
+%%    prose and you cannot simply say ``see \ref{pseudocode}'';  you must use
+%%    the object name, such as ``see Figure \ref{pseudocode}'' (also capitalize
+%%    the object name.
+
+\documentclass[11pt]{book}
+
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{times}
+\usepackage{url}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{ifthen}
+\usepackage{listings}
+\usepackage[section]{placeins}
+\usepackage{xtab}
+\usepackage{url}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+%%\usepackage{float}
+%%\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage[small]{caption}
+\usepackage{subcaption}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{microtype}
+\usepackage{color, colortbl}
+\usepackage{pspicture}
+\usepackage[pdf]{pstricks} 
+\usepackage{rotating}
+\usepackage{tikz}
+\usepackage[nottoc,numbib]{tocbibind} 
+%\usepackage[table]{xcolor}
+
+\usepackage{url}
+\usepackage{multirow}
+
+%\usepackage{algorithm}
+%\usepackage{algorithmic}
+\DeclareGraphicsExtensions{.pdf,.eps,.svg,.pgm,.png}
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{3}
+\setcounter{totalnumber}{4}  
+\renewcommand{\topfraction}{0.5}
+\renewcommand{\bottomfraction}{0.95}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.7}
+
+\setlength{\abovecaptionskip}{3pt}
+\setlength{\belowcaptionskip}{3pt}
+
+\pagestyle{fancy}
+\setboolean{@twoside}{false} 
+\setlength{\headsep}{25pt}
+\setlength{\headheight}{14pt}
+
+    % EXTREMELY COMMON LaTeX PACKAGES TO INCLUDE:
+    \usepackage{amsmath,amsthm, amsfonts,amssymb} % For AMS Beautification
+    \usepackage{setspace} % For Single & Double Spacing Commands
+    \usepackage[linktocpage,bookmarksopen,bookmarksnumbered,% For PDF navigation
+                pdftitle={University of Cincinnati PhD. Thesis},%   and URL hyperlinks
+                pdfauthor={Department of Electrical Engineering and Computer Science},%
+                pdfsubject={UC },%
+                pdfkeywords={UC}]{hyperref}
+    \usepackage{lipsum}
+    \numberwithin{equation}{section}
+    \numberwithin{figure}{section}
+\newtheorem{Theorem}{Theorem}[section]
+\newtheorem{Definition}[Theorem]{Definition}
+\newtheorem{Rule}[Theorem]{Rule}
+
+\begin{document}
+\include{00preamble} 
+\include{01introduction}
+\include{02background}
+\include{03relatedwork}
+\include{04algorithmmotivations}
+\include{05implementation}
+\include{05.5adaptivelsh}
+\include{06perfanalysis}
+\include{07theoretical}
+\include{08conclusions}
+\include{09bibappendix}
+
+
+\end{document}

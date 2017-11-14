@@ -1,0 +1,194 @@
+\chapter{Introduction}
+
+Humans and animals are often taxed with the task of categorizing things to augment their understandings beyond past
+experience alone.  In essence humans and animals are generating models.  Model generation is a primary cognitive skill
+that underlies our ability for prediction and understanding.  A primitive examples of this would be to decide whether an
+animals is dangerous or not, based on past observations of the same species or similar looking animals.  A solution to
+this decision problem would require a clustering of observations along with the outcome of dangerous or not.  A
+clustering establishes a model for a given set of observations based on a metric of closeness in some parameter space.
+In our example deciding whether an unseen animals is dangerous or not would likely include an evaluation of teeth shape,
+relative size, eye location relative to head, etc.  In effect, forming two clusters of attributes relating to the
+predator/prey nature of a given animal.
+
+Human capabilities for implicit observation, and subsequent model generation far exceed anything possible with today's
+computing systems.  The problem however arises from the limitations of human observations in both size and dimension.
+While humans are good at building models for the tangible things around them, they are often unable to build similar
+models for complex systems that reside in less intuitive spaces.  Mathematics and computing give us a probe into this
+unattainable world through the use of numeric and graph based parameter embedding.  However high dimensional, numerical
+spaces are still not very natural concepts for humans; while computing machinery on the other hand is quite at home in
+with these concepts, in fact it's often a prerequisite for their use.
+
+The development of mathematics and computing allow humans to augment abilities of prediction to develop models for
+massive, unintuitive and fast changing systems.  These models allow humans to predict droughts, genetic predisposition
+to disease, financial fraud, expose the underlying principles of particle physics, and many other useful areas that
+improve our understanding, the quality of our lives, and protect the state of our planet.
+
+Following the problem with correspondence between machines and concepts, the implicit parameter space is often encoded
+into a more explicit objective space, such as a high dimensional euclidean space.  In this setting data can be
+rigorously scrutinized for correlation and correspondence between observations.  Such correlation can then be distilled
+into a model from which decisions can be made.
+
+\section{Clustering}
+
+Clustering has long been the standard method used for the analysis of labeled and unlabeled data and is a principle
+occupation of statistical classification.  The effect of clustering data allows for identifying dissimilar and similar
+observation in a dataset --- often unattainable by standard single pass statistical methods.  Single pass, data
+intensive, statistical methods are often the primary workhorses for database processing of business logic and scientific
+domains, while clustering is often overlooked due to issues of scalability \cite{clusters} and perceived complexity.  A
+multitude of surveys \cite{clusters} have been made available comparing different aspects of clustering algorithms in
+regard to accuracy, complexity, and application domain.  Due to this importance in machine learning, data clustering has
+generated extensive interest in the computing and mathematics fields
+\cite{anderberg1973,Samet,clusters,latent1,Hofmann,clusterstats,Zass2005}.  
+
+Despite rigorous exploration, advancements in computing and countless variations, the Lloyd-type iteration $k$-means 
+algorithm \cite{Hartigan, macqueen-67} remains the base for some of the most successful parametric clustering 
+algorithms\cite{arthur-07}.  Of those the most successful clustering algorithm is the $k$-means algorithm. The $k$-means
+algorithm seeks an optimal partitioning of a dataset into $k$ subsets that minimizes the within or inter-cluster distance.
+The Lloyd-type/Lloyd-step $k$-means algorithm is an iterative algorithm for solving the $k$-means problem, that alternates 
+between a cluster assignment step and centroid update step. These types of algorithms are important to consider because 
+they not only embody many clustering procedures, but they also exemplify an intrinsic barrier to parallelism, namely the 
+cluster update step, that is difficult to remove.
+
+The success of $k$-means and similar clustering methods have facilitated enormous advances in nearly all scientific fields
+as well as many social, business, and financial occupations.  Advances in clustering, in either scalability or speed
+have a direct impact on the quality and timeliness of clustering results.  However, the unavoidable architectural
+migration from single core processors with ever increasing clock rates, to static clock rates and increasing numbers of
+cores, has introduced unique challenges for algorithm developers and data scientists.  Unfortunately, Lloyd-type
+$k$-means is a data centric algorithm, with numerous sequential bottlenecks that do not lend themselves to parallel
+implementation.
+
+\section{Big Data Analysis}
+Data analysis has a long been able to discovery latent data structures that were otherwise inaccessible by human
+observation alone\cite{calderbank}.  
+Recent advances in data aggregation along with the continuous roll-out of progressively more
+advanced communication infrastructures has provided an unbounded sources of information.  This torrent of data, spurred
+by industries insatiable appetite for deeper insights and user personalization, has pushed data analysis tasks well into
+the realm of high performance computing.  While the processing of large-scale datasets is not new (VLDB is 42 years old this
+year), the emergence of platforms for managing and frameworks for processing in the distributed setting has created a
+new commercial market for large scale computing.  The trend is often referred to as \emph{Big Data}.  The development of
+distributed frameworks is a natural progression of the parallel processing required in facilitating the transition from
+single to multi core CPUs.  Furthermore the cost of large scale computing has decreased considerably thanks to cloud
+services making it available to a larger community of researchers.
+
+Where the general framework of distributed computing consists of a single data archive and attached processing nodes,
+more recent frameworks attempt to take advantage of in place computing at the site of the data itself, taking advantage
+of data locality and avoiding costly communication overhead. The common models for big data analysis consist of the 
+MapReduce \cite{dean-08} and MPI \cite{mpi-spec-93} frameworks.  Both models take decidedly different approaches to parallelism.  
+While MPI, or message passing interface, assists developers in the communication aspects of parallelism, the particular 
+programming structure is mainly up to the developer.  Although not strictly enforced, the common MPI interface consists of
+a master process that distributes data to worker processors, who then compute a partial solution that is then returned to the
+master process for aggregation or further processing. MapReduce in contrast forces a more strict processing paradigm based on 
+the functional programming structure.  MapReduce tries to avoid costly data communication overhead, by enforcing data locality
+through functional programming structure.  This structure inverts the standard data distribution mechanism, by distributing 
+the function to the data, instead of distributing the data to functions. These frameworks also often take care of other common 
+but difficult to optimize, system level tasks, such as fault tolerance, low level communication and shared data storage 
+architectures.  Both of these processing structure are amenable to our proposed algorithms.
+ 
+\section{Security}
+Another emerging requirement for data clustering especially in the distributed setting is security.  Patient privacy is
+a high priority \cite{presidential}, and de-anonymization attacks have made it more difficult to provide anonymization
+assurances beyond what is provided by data scrubbing alone.  Further, the decentralized geographic distribution of
+medical care facilities prevents many tangential security measures often found in more centralized network topologies
+(user$\rightarrow$organization).
+
+\section{RPHash}
+For these reasons we developed an algorithm to solve a parametric $k$-means clustering problem on distributed and
+streaming datasets. In addition to the goal of distributed clustering, due to the ever increase possibility of data
+breach, or method also provides reasonable security for data in transit and at rest.  We show that our solution offers 
+comparable clustering performance to off-line solutions on a variety of synthetic and real world datasets.  Our 
+solution uses bounded memory and achieves asymptotic linear scalability for a chosen set of configuration parameters.
+
+Our algorithm, called \emph{Random Projection Hash} (\textsf{RPHash}), was expressly created to provide algorithmic
+scalability on distributed datasets.  Many clustering algorithms have been converted to function efficiently on
+distributed data, however they often have potential issues regarding asymptotic scalability \cite{Proclus},
+dimensionality in which they are effective \cite{Clarans}, and robustness to noise.  Although many algorithms have been
+proposed for parallel clustering, many issues are still present when applied to very large, high dimensional,
+distributed datasets \cite{Clarans,Proclus,mpicluster,distributeddata,parclus}.  \textsf{RPHash} combines approximate and
+randomized methods in a new way to solve these issues of scalability and data security under the assumption that
+approximate clustering is qualitatively similar to exact clustering methods, due to noise, redundancy, data loss, and
+the curse of dimensionality \cite{Beyer1999}.
+
+In addition, we propose a variant of \textsf{RPHash} called \textsf{StreamingRPHash} that is similarly effective for the
+streaming data setting.  Data streams in todays high tech environment can arrive continuously at a very fast rate.  They
+are considered to be potentially unbounded and the user is primarily interested in recent data that keep track of the
+emerging trends \cite{silva-13,braverman, shindler,aggarwal}.  Data streams are an increasingly common data model
+owing to the pervasiveness of always on-line computing, and continuously updated measurements.  The stream clustering
+data model puts two additional restrictions on the standard big data clustering model. First the complexity of the 
+on-line step, in which vectors are added, must be sub-linear in $n$, the input size. The other requirement is that the
+data can only be seen once, with some exception for temporary storage in a sub-linear in $n$ data sketch.
+
+\section{Thesis Structure}
+The structure of this the consists of presentation of required background information and related work, followed by 
+our problem motivation, followed by a description of our proposed solution. We then test our proposed solution, and
+discuss its strengths and weaknesses compared to other algorithms. More specifically, the remainder of this dissertation 
+is detailed in the following paragraphs. 
+
+In order to establish a common understanding of the clustering problem, various tools, notation and approaches, we give
+a brief survey of related work, and background information.  Chapter \ref{bkgrnd} provides some background information
+on material necessary for covering various preliminaries important to the description of our \textsf{RPHash} algorithm. 
+The background section is organized into subsections corresponding to the problem decomposition of the \textsf{RPHash} algorithm,
+in which each procedure corresponds to a section.
+Chapter \ref{related} reviews some of the recent work with similar methods providing more scalable data clustering. 
+We begin by discussing scalable solutions to low dimensional clustering, followed by scalable solutions to high dimensional
+clustering.
+
+To construct our reasoning and motivation for \textsf{RPHash} we present the next two chapters on motivations and algorithm description.
+We follow the chapter with an added description of a related clustering method that attempts to use the data to define
+the algorithm structures.
+Chapter \ref{motive} introduces the initial goal of \textsf{RPHash}, and our early attempts at creating a scalable clustering
+algorithm.  This section describes a drawback of the LSH based $k$NN problem that was realized to be useful for the
+$k$-means clustering problem.
+Chapter \ref{secrphash} provides a detailed description of the \textsf{RPHash} algorithm.  We describe the various components,
+and the configurations of those components. Next we describe an extension of \textsf{RPHash}, \textsf{streamingRPHash} designed for 
+the streaming environment. The following chapter
+Chapter \ref{secadaptivelsh} first introduces a problem with LSH for data that is tightly clustered, but not uniformly 
+distributed throughout the data space.  We use this understanding to design a new LSH algorithm that uses the input data 
+to adaptively modify the specificity of the hash function.  We then propose a tree based clustering method that uses this type
+of function to define the clusters as well. We then extend this solution to describe a general compressed space data structure
+with applications beyond clustering.  
+
+We conclude the dissertation with our experimental chapter, followed by a short chapter on the theoretical results, 
+concluded by a set of conclusions, based on the findings from the previous two sections.
+Chapter \ref{experiments} provides both clustering performance and timing results for \textsf{RPHash} and its
+variants. The chapter begins with a description of the method that we compare \textsf{RPHash} against, the datasets
+used for the comparison, and the metrics on which comparisons are made. Then an optimal baseline is established
+through an exhaustive test of all possible configurations, to determine which is the best overall configuration.
+The section continues by describing tests for each of the three proposed clustering methods, with plots and results
+comparing them to other common clustering methods.  We also include a brief test of vector anonymity,
+that demonstrates the security of our \textsf{RPHash} algorithms, as well as a test of the parallel speedup potential for
+our \textsf{RPHash} algorithms. Chapter \ref{theory} provides theoretical asymptotic analysis for the proposed \text{RPHash} 
+algorithms. We also include analysis for error propagation and techniques for decreasing the memory footprint of 
+our tree based clustering method.  Finally, Chapter \ref{conclusions} contains a detailed analysis of the results
+found in Chapter \ref{experiments}, followed by concluding remarks about the nature of clustering and the \textsf{RPHash}
+approach to clustering. We conclude by presenting some ideas for future directions to for our line of research. 
+
+%$k$-means clustering has long been used in academic, industrial, commercial, government
+%and military applications.  Clustering has also found success among new technologies
+%involving embedded systems in the recent movement to the so called Internet of
+%Things(\emph{IoT}).  \emph{IoT} devices offer increased flexibility for data acquisition
+%platforms while also suffering from a multitude of power, communication bandwidth,
+%security, and storage problems.  In order to overcome some of these hurdles, clustering
+%offers a way of minimizing communication and storage requirements by maintaining only a
+%pertinent digest of collected data.  Furthermore, this minimization can result in positive
+%effects to power consumption, and in the case of our solution, offers mitigation to data
+%breach related security problems \cite{carraher-15}.
+
+%Our algorithm, called \emph{Streaming Random Projection Hash} (\textsf{streamingRPHash}),
+%is expressly created to provide algorithmic scalability while operating on large, high
+%dimensional data streams.  While many stream clustering algorithms and
+%conventional clustering methods converted to function on streaming data have been investigated, 
+%they often
+%have issues regarding asymptotic scalability \cite{Proclus}, dimensionality limits
+%\cite{Clarans}, and robustness to noise.  A recent set of stream clustering algorithms
+%have been proposed to address (with varying degrees of success) many of these problems
+%.  \textsf{streamingRPHash} combines random projection
+%and locality sensitive hashing in a new way to solve issues of scalability and data
+%security for real-world high dimension streaming data analysis.
+
+%The remainder of this paper is organized as follows:  Section \ref{bkgrnd} provides
+%some background information necessary for covering various preliminaries
+%important to the description of the \textsf{streamingRPHash} algorithm.  Section
+%\ref{related} reviews some of the recent work with similar methods for data stream
+%clustering.  Section \ref{rphash} provides an overview of the \textsf{streamingRPHash}
+%algorithm.  Section \ref{experiments} contains experimental results and a brief
+%summary of findings.  Finally, Section \ref{conclude} concludes the paper.
